@@ -6,27 +6,15 @@ reload(factory)
 from factory import *
 
 
-def backport_factory(name=None, distribution='trusty', architecture='amd64'):
+def backport_factory(name=None, setVersion=False, repo='ethereum-qt', distribution='trusty', architecture='amd64', packages=[]):
     factory = BuildFactory()
 
-    packages = [
-        "harfbuzz",
-        "qtbase-opensource-src",
-        "qtxmlpatterns-opensource-src",
-        "qtdeclarative-opensource-src",
-        "qtscript-opensource-src",
-        "qtwebsockets-opensource-src",
-        "qtwebkit-opensource-src",
-        "qttools-opensource-src",
-        "qtquick1-opensource-src",
-        "qtquickcontrols-opensource-src",
-        "qtlocation-opensource-src"
-    ]
-
-    if distribution == 'trusty':
-        packages.append("libinput")
-
     for package in packages:
+        cmd = ["backportpackage", "--dont-sign", "-w", "result", "-d", distribution]
+        if setVersion:
+            cmd.extend(["-v", Interpolate("%(prop:version)s")])
+        cmd.append(package)
+
         for step in [
             # Create backport
             ShellCommand(
@@ -35,7 +23,7 @@ def backport_factory(name=None, distribution='trusty', architecture='amd64'):
                 name="backport-%s" % package,
                 description='backporting %s' % package,
                 descriptionDone='backport %s' % package,
-                command=["backportpackage", "--dont-sign", "-w", "result", "-d", distribution, package],
+                command=cmd,
                 env={
                     "DEBFULLNAME": "caktux (Buildserver key)",
                     "DEBEMAIL": "caktux@gmail.com",
@@ -104,8 +92,8 @@ def backport_factory(name=None, distribution='trusty', architecture='amd64'):
             name='dput',
             description='dputting',
             descriptionDone='dput',
-            command=Interpolate("dput ppa:ethereum/ethereum-qt changes/%(kw:dist)s/%(kw:arch)s/%(kw:name)s/%(prop:buildnumber)s/*.changes",
-                                dist=distribution, arch=architecture, name=name)
+            command=Interpolate("dput ppa:ethereum/%(kw:repo)s changes/%(kw:dist)s/%(kw:arch)s/%(kw:name)s/%(prop:buildnumber)s/*.changes",
+                                repo=repo, dist=distribution, arch=architecture, name=name)
         )
     ]: factory.addStep(step)
 

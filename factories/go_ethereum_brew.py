@@ -33,6 +33,15 @@ def brew_go_factory(branch='develop'):
             codebase='homebrew-ethereum',
             retry=(5, 3),
             workdir='brew'
+        ),
+        SetPropertyFromCommand(
+            haltOnFailure=True,
+            logEnviron=False,
+            name="set-old-version",
+            descriptionDone='set old version',
+            command='sed -ne "s/^%s  version \'\(.*\)\'/\\1/p" ethereum.rb' % ("" if branch == 'master' else "  "),
+            property='old_version',
+            workdir='brew',
         )
     ]: factory.addStep(step)
 
@@ -59,12 +68,56 @@ def brew_go_factory(branch='develop'):
         ShellCommand(
             haltOnFailure=True,
             logEnviron=False,
+            name="git-add",
+            descriptionDone='git add',
+            command='git add ethereum.rb',
+            workdir='brew'
+        ),
+        ShellCommand(
+            logEnviron=False,
+            name="git-commit",
+            descriptionDone='git commit',
+            command=Interpolate('git commit -m "bump ethereum to %(prop:version)s on %(kw:branch)s"', branch=branch),
+            workdir='brew',
+            decodeRC={0: SUCCESS, 1: SUCCESS, 2: WARNINGS}
+        ),
+        ShellCommand(
+            haltOnFailure=True,
+            logEnviron=False,
+            name="git-push",
+            descriptionDone='git push',
+            command='git pull --no-edit && git push',
+            workdir='brew',
+            decodeRC={0: SUCCESS, 1: WARNINGS, 2: WARNINGS}
+        ),
+        ShellCommand(
+            haltOnFailure=True,
+            logEnviron=False,
             name="cleanup",
             description='cleanup',
             descriptionDone='clean',
             command=["brew", "remove", "ethereum"],
             workdir='brew',
             decodeRC={0: SUCCESS, 1: SUCCESS, 2: WARNINGS}
+        ),
+        ShellCommand(
+            haltOnFailure=True,
+            logEnviron=False,
+            name="clean-up-bottles",
+            description='cleaning up bottles',
+            descriptionDone='clean up bottles',
+            command="rm *.tar.gz",
+            workdir='brew',
+            decodeRC={0: SUCCESS, 1: SUCCESS, 2: WARNINGS}
+        ),
+        ShellCommand(
+            haltOnFailure=True,
+            logEnviron=False,
+            name="brew-update",
+            description='brew updating',
+            descriptionDone='brew update',
+            command=["brew", "update"],
+            workdir='brew'
         ),
         Compile(
             haltOnFailure=True,
@@ -74,10 +127,7 @@ def brew_go_factory(branch='develop'):
             descriptionDone='brew',
             command=brew_install_cmd(cmd=['brew', 'install', 'ethereum.rb', '-v', '--build-bottle'], branch=branch),
             workdir='brew'
-        )
-    ]: factory.addStep(step)
-
-    for step in [
+        ),
         ShellCommand(
             haltOnFailure=True,
             logEnviron=False,
@@ -91,7 +141,7 @@ def brew_go_factory(branch='develop'):
             haltOnFailure=True,
             logEnviron=False,
             name="set-old-revision",
-            command='sed -ne "s/^%s    revision \(.*\)/\\1/p" ethereum.rb' % ("" if branch == 'master' else "  "),
+            command='sed -ne "s/^    revision \(.*\)/\\1/p" ethereum.rb',
             property='old_revision',
             workdir='brew'
         ),
@@ -100,7 +150,7 @@ def brew_go_factory(branch='develop'):
             description="setting bottle",
             descriptionDone="set bottle",
             property="bottle",
-            value=Interpolate("ethereum-%(prop:version)s.yosemite.bottle.tar.gz")
+            value=Interpolate("ethereum-%(prop:version)s.yosemite.bottle%(kw:revision)s.tar.gz", revision=brew_revision_suffix)
         ),
         SetPropertyFromCommand(
             haltOnFailure=True,

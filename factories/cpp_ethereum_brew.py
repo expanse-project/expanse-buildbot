@@ -31,6 +31,15 @@ def brew_cpp_factory(branch='develop', headless=True):
             codebase='homebrew-ethereum',
             retry=(5, 3),
             workdir='brew'
+        ),
+        SetPropertyFromCommand(
+            haltOnFailure=True,
+            logEnviron=False,
+            name="set-old-version",
+            descriptionDone='set old version',
+            command='sed -ne "s/^%s  version \'\(.*\)\'/\\1/p" cpp-ethereum.rb' % ("" if branch == 'master' else "  "),
+            property='old_version',
+            workdir='brew',
         )
     ]: factory.addStep(step)
 
@@ -42,7 +51,7 @@ def brew_cpp_factory(branch='develop', headless=True):
                     logEnviron=False,
                     name="update-version",
                     descriptionDone='update version',
-                    command=Interpolate('sed -i "" "s/^  version \'\(.*\)\'/  version \'%(prop:version)s-%(prop:protocol)s\'/" cpp-ethereum.rb'),
+                    command=Interpolate('sed -i "" "s/^  version \'\(.*\)\'/  version \'%(prop:version)s\'/" cpp-ethereum.rb'),
                     workdir='brew',
                 )
             ]: factory.addStep(step)
@@ -54,36 +63,38 @@ def brew_cpp_factory(branch='develop', headless=True):
                     logEnviron=False,
                     name="update-version",
                     descriptionDone='update version',
-                    command=Interpolate('sed -i "" "s/^    version \'\(.*\)\'/    version \'%(prop:version)s-%(prop:protocol)s\'/" cpp-ethereum.rb'),
+                    command=Interpolate('sed -i "" "s/^    version \'\(.*\)\'/    version \'%(prop:version)s\'/" cpp-ethereum.rb'),
                     workdir='brew',
-                ),
-                ShellCommand(
-                    haltOnFailure=True,
-                    logEnviron=False,
-                    name="git-add",
-                    descriptionDone='git add',
-                    command='git add cpp-ethereum.rb',
-                    workdir='brew',
-                ),
-                ShellCommand(
-                    logEnviron=False,
-                    name="git-commit",
-                    descriptionDone='git commit',
-                    command=Interpolate('git commit -m "bump cpp-ethereum to %(prop:version)s-%(prop:protocol)s at ethereum/cpp-ethereum@%(kw:cpp_revision)s"',
-                                        cpp_revision=get_short_revision),
-                    workdir='brew',
-                    decodeRC={0: SUCCESS, 1: SUCCESS, 2: WARNINGS}
-                ),
-                ShellCommand(
-                    haltOnFailure=True,
-                    logEnviron=False,
-                    name="git-push",
-                    descriptionDone='git push',
-                    command='git pull --no-edit && git push',
-                    workdir='brew',
-                    decodeRC={0: SUCCESS, 1: WARNINGS, 2: WARNINGS}
                 )
             ]: factory.addStep(step)
+
+        for step in [
+            ShellCommand(
+                haltOnFailure=True,
+                logEnviron=False,
+                name="git-add",
+                descriptionDone='git add',
+                command='git add cpp-ethereum.rb',
+                workdir='brew',
+            ),
+            ShellCommand(
+                logEnviron=False,
+                name="git-commit",
+                descriptionDone='git commit',
+                command=Interpolate('git commit -m "bump cpp-ethereum to %(prop:version)s on %(kw:branch)s"', branch=branch),
+                workdir='brew',
+                decodeRC={0: SUCCESS, 1: SUCCESS, 2: WARNINGS}
+            ),
+            ShellCommand(
+                haltOnFailure=True,
+                logEnviron=False,
+                name="git-push",
+                descriptionDone='git push',
+                command='git pull --no-edit && git push',
+                workdir='brew',
+                decodeRC={0: SUCCESS, 1: WARNINGS, 2: WARNINGS}
+            )
+        ]: factory.addStep(step)
 
     for step in [
         ShellCommand(
@@ -93,6 +104,16 @@ def brew_cpp_factory(branch='develop', headless=True):
             description='cleaning up',
             descriptionDone='clean up',
             command=["brew", "remove", "cpp-ethereum"],
+            workdir='brew',
+            decodeRC={0: SUCCESS, 1: SUCCESS, 2: WARNINGS}
+        ),
+        ShellCommand(
+            haltOnFailure=True,
+            logEnviron=False,
+            name="clean-up-bottles",
+            description='cleaning up bottles',
+            descriptionDone='clean up bottles',
+            command="rm *.tar.gz",
             workdir='brew',
             decodeRC={0: SUCCESS, 1: SUCCESS, 2: WARNINGS}
         ),
@@ -139,7 +160,7 @@ def brew_cpp_factory(branch='develop', headless=True):
                 description="setting bottle",
                 descriptionDone="set bottle",
                 property="bottle",
-                value=Interpolate("cpp-ethereum-%(prop:version)s-%(prop:protocol)s.yosemite.bottle.tar.gz")
+                value=Interpolate("cpp-ethereum-%(prop:version)s.yosemite.bottle%(kw:revision)s.tar.gz", revision=brew_revision_suffix)
             ),
             SetPropertyFromCommand(
                 haltOnFailure=True,
@@ -154,9 +175,9 @@ def brew_cpp_factory(branch='develop', headless=True):
                 name='upload-bottle',
                 slavesrc=Interpolate("%(prop:bottle)s"),
                 masterdest=Interpolate("public_html/builds/%(prop:buildername)s/%(prop:buildnumber)s/bottle/"
-                                       "cpp-ethereum-%(prop:version)s-%(prop:protocol)s.yosemite.bottle.%(prop:buildnumber)s.tar.gz"),
+                                       "cpp-ethereum-%(prop:version)s.yosemite.bottle.%(prop:buildnumber)s.tar.gz"),
                 url=Interpolate("/builds/%(prop:buildername)s/%(prop:buildnumber)s/bottle/"
-                                "cpp-ethereum-%(prop:version)s-%(prop:protocol)s.yosemite.bottle.%(prop:buildnumber)s.tar.gz"),
+                                "cpp-ethereum-%(prop:version)s.yosemite.bottle.%(prop:buildnumber)s.tar.gz"),
                 workdir='brew'
             )
         ]: factory.addStep(step)
@@ -200,7 +221,7 @@ def brew_cpp_factory(branch='develop', headless=True):
                 logEnviron=False,
                 name="git-commit",
                 descriptionDone='git commit',
-                command=Interpolate('git commit -m "bump version to %(prop:version)s-%(prop:protocol)s at ethereum/cpp-ethereum@%(kw:cpp_revision)s"',
+                command=Interpolate('git commit -m "bump version to %(prop:version)s at ethereum/cpp-ethereum@%(kw:cpp_revision)s"',
                                     cpp_revision=get_short_revision),
                 workdir='brew',
                 decodeRC={0: SUCCESS, 1: SUCCESS, 2: WARNINGS}
@@ -248,7 +269,7 @@ def brew_cpp_factory(branch='develop', headless=True):
                 logEnviron=False,
                 name="update-successful-version",
                 descriptionDone='update successful version',
-                command=Interpolate('sed -i "" "s/^      version \'\(.*\)\'/      version \'%(prop:version)s-%(prop:protocol)s\'/" cpp-ethereum.rb'),
+                command=Interpolate('sed -i "" "s/^      version \'\(.*\)\'/      version \'%(prop:version)s\'/" cpp-ethereum.rb'),
                 workdir='brew',
             ),
             ShellCommand(
@@ -272,7 +293,7 @@ def brew_cpp_factory(branch='develop', headless=True):
                 logEnviron=False,
                 name="git-commit",
                 descriptionDone='git commit',
-                command=Interpolate('git commit -m "bump successful to %(prop:version)s-%(prop:protocol)s at ethereum/cpp-ethereum@%(kw:cpp_revision)s"',
+                command=Interpolate('git commit -m "bump successful to %(prop:version)s at ethereum/cpp-ethereum@%(kw:cpp_revision)s"',
                                     cpp_revision=get_short_revision),
                 workdir='brew',
                 decodeRC={0: SUCCESS, 1: SUCCESS, 2: WARNINGS}

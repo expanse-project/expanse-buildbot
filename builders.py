@@ -22,7 +22,7 @@ from factories import pyethereum
 from factories import pyethapp
 from factories import serpent
 from factories import debian
-from factories import debian_qt
+from factories import debian_backport
 from factories import poc_servers
 from factories import integration
 
@@ -42,7 +42,7 @@ reload(pyethereum)
 reload(pyethapp)
 reload(serpent)
 reload(debian)
-reload(debian_qt)
+reload(debian_backport)
 reload(poc_servers)
 reload(integration)
 
@@ -62,7 +62,7 @@ from factories.pyethereum import *
 from factories.pyethapp import *
 from factories.serpent import *
 from factories.debian import *
-from factories.debian_qt import *
+from factories.debian_backport import *
 from factories.poc_servers import *
 from factories.integration import *
 
@@ -211,7 +211,7 @@ for branch in ['master', 'develop']:
         BuilderConfig(
             name="OSX C++ %s branch" % branch,
             builddir="build-cpp-osx-%s" % branch,
-            slavenames=["osx"],
+            slavenames=["osx", "osx-two"],
             factory=osx_cpp_factory(branch=branch),
             locks=[osx_lock.access('counting')]),
         BuilderConfig(
@@ -229,13 +229,13 @@ for branch in ['master', 'develop']:
         BuilderConfig(
             name="OSX Go %s branch" % branch,
             builddir="build-go-osx-%s" % branch,
-            slavenames=["osx"],
+            slavenames=["osx", "osx-two"],
             factory=osx_go_factory(branch=branch),
             locks=[osx_lock.access('counting')]),
         BuilderConfig(
             name="OSX C++ %s brew" % branch,
             builddir="build-cpp-osx-%s-brew" % branch,
-            slavenames=["osx"],
+            slavenames=["osx", "osx-two"],
             factory=brew_cpp_factory(branch=branch),
             locks=[brew_lock.access('counting')]),
         BuilderConfig(
@@ -247,7 +247,7 @@ for branch in ['master', 'develop']:
         BuilderConfig(
             name="OSX Go %s brew" % branch,
             builddir="build-go-ethereum-%s-brew" % branch,
-            slavenames=["osx"],
+            slavenames=["osx", "osx-two"],
             factory=brew_go_factory(branch=branch),
             locks=[brew_lock.access('counting')]),
         BuilderConfig(
@@ -379,13 +379,25 @@ for distribution in distributions:
             name="golang %s-%s" % ("amd64", distribution),
             builddir="build-golang-%s-%s" % ("amd64", distribution),
             slavenames=["slave-cpp-one-deb", "slave-cpp-two-deb"],
-            factory=deb_factory(
+            factory=backport_factory(
                 name="golang",
-                repourl="https://github.com/golang/go.git",
-                ppabranch="golang",
-                branch="release-branch.go1.4",
+                setVersion=True,
+                repo="ethereum",
                 architecture="amd64",
-                distribution=distribution),
+                distribution=distribution,
+                packages=["golang"]),
+            locks=[latent_lock.access('counting')]),
+        BuilderConfig(
+            name="cmake %s-%s" % ("amd64", distribution),
+            builddir="build-cmake-%s-%s" % ("amd64", distribution),
+            slavenames=["slave-cpp-one-deb", "slave-cpp-two-deb"],
+            factory=backport_factory(
+                name="cmake",
+                setVersion=True,
+                repo="ethereum",
+                architecture="amd64",
+                distribution=distribution,
+                packages=["cmake"]),
             locks=[latent_lock.access('counting')])
     ]: builders.append(builder)
 
@@ -397,8 +409,23 @@ for distribution in distributions:
                 slavenames=["slave-cpp-one-deb", "slave-cpp-two-deb"],
                 factory=backport_factory(
                     name="qt5",
+                    repo="ethereum-qt",
                     architecture="amd64",
-                    distribution=distribution),
+                    distribution=distribution,
+                    packages=[
+                        "harfbuzz",
+                        "libinput",
+                        "qtbase-opensource-src",
+                        "qtxmlpatterns-opensource-src",
+                        "qtdeclarative-opensource-src",
+                        "qtscript-opensource-src",
+                        "qtwebsockets-opensource-src",
+                        "qtwebkit-opensource-src",
+                        "qttools-opensource-src",
+                        "qtquick1-opensource-src",
+                        "qtquickcontrols-opensource-src",
+                        "qtlocation-opensource-src"
+                    ]),
                 locks=[latent_lock.access('counting')])
         ]: builders.append(builder)
 
@@ -490,7 +517,7 @@ for builder in [
     BuilderConfig(
         name="OSX C++ pull requests",
         builddir="build-cpp-ethereum-osx-pr",
-        slavenames=["osx"],
+        slavenames=["osx", "osx-two"],
         factory=osx_cpp_factory(branch='develop', isPullRequest=True, headless=False),
         locks=[osx_lock.access('counting')]),
     BuilderConfig(
@@ -502,7 +529,7 @@ for builder in [
     BuilderConfig(
         name="OSX Go pull requests",
         builddir="build-go-ethereum-osx-pr",
-        slavenames=["osx"],
+        slavenames=["osx", "osx-two"],
         factory=osx_go_factory(branch='develop', isPullRequest=True),
         locks=[osx_lock.access('counting')]),
     BuilderConfig(
@@ -539,14 +566,14 @@ for builder in [
         locks=[win_lock_go.access('counting')]),
 
     # Integration
-    BuilderConfig(
-        name="Linux C++ integration",
-        builddir="build-cpp-ethereum-integration",
-        slavenames=[
-            "slave-cpp-five-integration"
-        ],
-        factory=integration_factory(),
-        locks=[build_lock.access('counting')]),
+    # BuilderConfig(
+    #     name="Linux C++ integration",
+    #     builddir="build-cpp-ethereum-integration",
+    #     slavenames=[
+    #         "slave-cpp-five-integration"
+    #     ],
+    #     factory=integration_factory(),
+    #     locks=[build_lock.access('counting')]),
 
     BuilderConfig(
         name="Linux C++ deb tester",

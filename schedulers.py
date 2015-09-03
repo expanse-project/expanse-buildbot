@@ -253,7 +253,7 @@ for scheduler in [
     # Pull requests
     AnyBranchScheduler(
         name="cpp-ethereum-develop-pr-git",
-        change_filter=filter.ChangeFilter(project='cpp-ethereum', category='pull-request'),
+        change_filter=filter.ChangeFilter(codebase='cpp-ethereum', category='pull'),
         codebases=all_cpp_ethereum_codebases,
         treeStableTimer=60,
         builderNames=[
@@ -265,7 +265,7 @@ for scheduler in [
         ]),
     AnyBranchScheduler(
         name="go-ethereum-develop-pr-git",
-        change_filter=filter.ChangeFilter(project='go-ethereum', category='pull-request'),
+        change_filter=filter.ChangeFilter(codebase='go-ethereum', category='pull'),
         codebases=all_go_ethereum_codebases,
         treeStableTimer=60,
         builderNames=[
@@ -276,7 +276,7 @@ for scheduler in [
         ]),
     AnyBranchScheduler(
         name="pyethereum-pr-git",
-        change_filter=filter.ChangeFilter(project='pyethereum', category='pull-request'),
+        change_filter=filter.ChangeFilter(codebase='pyethereum', category='pull'),
         codebases=all_pyethereum_codebases,
         treeStableTimer=60,
         builderNames=[
@@ -285,7 +285,7 @@ for scheduler in [
         ]),
     AnyBranchScheduler(
         name="pyethapp-pr-git",
-        change_filter=filter.ChangeFilter(project='pyethapp', category='pull-request'),
+        change_filter=filter.ChangeFilter(codebase='pyethapp', category='pull'),
         codebases=all_pyethapp_codebases,
         treeStableTimer=60,
         builderNames=[
@@ -294,7 +294,7 @@ for scheduler in [
         ]),
     AnyBranchScheduler(
         name="serpent-pr-git",
-        change_filter=filter.ChangeFilter(project='serpent', category='pull-request'),
+        change_filter=filter.ChangeFilter(codebase='serpent', category='pull'),
         codebases=all_serpent_codebases,
         treeStableTimer=60,
         builderNames=[
@@ -303,7 +303,7 @@ for scheduler in [
         ]),
     AnyBranchScheduler(
         name="ethereumj-pr-git",
-        change_filter=filter.ChangeFilter(project='ethereumj', category='pull-request'),
+        change_filter=filter.ChangeFilter(codebase='ethereumj', category='pull'),
         codebases=all_ethereumj_codebases,
         treeStableTimer=300,
         builderNames=[
@@ -311,10 +311,10 @@ for scheduler in [
         ]),
 
     # Integration tests
-    Triggerable(
-        name="cpp-ethereum-integration",
-        builderNames=["Linux C++ integration"],
-        codebases=all_integration_codebases)
+    # Triggerable(
+    #     name="cpp-ethereum-integration",
+    #     builderNames=["Linux C++ integration"],
+    #     codebases=all_integration_codebases)
 
 ]: schedulers.append(scheduler)
 
@@ -521,10 +521,10 @@ for scheduler in [
         codebases=["go-ethereum"]),
 
     # Integration
-    ForceScheduler(
-        name="force-cpp-ethereum-integration",
-        builderNames=["Linux C++ integration"],
-        codebases=["cpp-ethereum", "ethereumjs", "integration"]),
+    # ForceScheduler(
+    #     name="force-cpp-ethereum-integration",
+    #     builderNames=["Linux C++ integration"],
+    #     codebases=["cpp-ethereum", "ethereumjs", "integration"]),
 
     # deb tester
     ForceScheduler(
@@ -659,20 +659,22 @@ for distribution in distributions:
         ForceScheduler(
             name="force-golang-%s-%s" % ("amd64", distribution),
             builderNames=["golang %s-%s" % ("amd64", distribution)],
-            repository=FixedParameter(name="repository", default=""),
-            project=FixedParameter(name="project", default=""),
-            branch=StringParameter(name="branch", default="release-branch.go1.4"),
-            revision=StringParameter(
-                name="revision",
-                label="Revision:<br>",
-                default="883bc6ed0ea815293fe6309d66f967ea60630e87",
-                required=True,
-                size=40),
             properties=[
                 StringParameter(
                     name="version",
                     label="Version:<br>",
-                    default="2:1.4.2",
+                    default="2:1.5-0ubuntu1",
+                    required=True,
+                    size=10)
+            ]),
+        ForceScheduler(
+            name="force-cmake-%s-%s" % ("amd64", distribution),
+            builderNames=["cmake %s-%s" % ("amd64", distribution)],
+            properties=[
+                StringParameter(
+                    name="version",
+                    label="Version:<br>",
+                    default="3.2.2-2ubuntu3",
                     required=True,
                     size=10)
             ])
