@@ -1,4 +1,4 @@
-buildbot==0.8.9
+buildbot==0.8.12
 service-identity
 simplejson
 txgithub
