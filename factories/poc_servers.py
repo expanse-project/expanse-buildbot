@@ -12,11 +12,11 @@ def cpp_ethereum_server_factory(branch='master'):
         Git(
             haltOnFailure=True,
             logEnviron=False,
-            repourl='https://github.com/ethereum/cpp-ethereum.git',
+            repourl='https://github.com/expanse-project/cpp-expanse.git',
             branch=branch,
             mode='full',
             method='copy',
-            codebase='cpp-ethereum',
+            codebase='cpp-expanse',
             retry=(5, 3)
         ),
         Configure(

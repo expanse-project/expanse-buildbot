@@ -17,7 +17,7 @@ def _buildslave_stop_cmd(props):
 #
 # Buildslave factories
 #
-def buildslave_factory(lang="cpp", client="cpp-ethereum"):
+def buildslave_factory(lang="cpp", client="cpp-expanse"):
     factory = BuildFactory()
 
     # Build base image
@@ -25,9 +25,9 @@ def buildslave_factory(lang="cpp", client="cpp-ethereum"):
         Git(
             haltOnFailure=True,
             logEnviron=False,
-            repourl='https://github.com/ethereum/ethereum-dockers.git',
+            repourl='https://github.com/expanse-project/expanse-dockers.git',
             mode='incremental',
-            codebase='ethereum-dockers',
+            codebase='expanse-dockers',
             retry=(5, 3)
         ),
         ShellCommand(

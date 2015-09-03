@@ -1,6 +1,6 @@
-# Ethereum Buildbot
+# Expanse Buildbot
 
-This project contains the configuration for the [Ethereum Buildbot](https://build.ethdev.com/waterfall)
+This project contains the configuration for the [Expanse Buildbot](https://build.ethdev.com/waterfall)
 
 Changes to this repository are automatically deployed once they are pushed to GitHub. Please open a pull request unless you really know what you are doing.
 
@@ -12,8 +12,8 @@ This is to create a local installation of buildbot for development purposes or t
 Start by cloning this repository locally and follow the steps below for your platform.
 
 ```
-git clone https://github.com/ethereum/ethereum-buildbot.git
-cd ethereum-buildbot
+git clone https://github.com/expanse-project/expanse-buildbot.git
+cd expanse-buildbot
 ```
 
 ### Ubuntu
@@ -103,22 +103,22 @@ First, note your host's IP under Docker using `ifconfig` to find Docker's networ
 
 Click on the `stdio` link of the failing step, and note the second line that should look like:
 ```
-in dir /home/your_username/ethereum-buildbot/testslave/build-buildslave-cpp-one/build
+in dir /home/your_username/expanse-buildbot/testslave/build-buildslave-cpp-one/build
 ```
 
 Move to that folder:
 ```
-cd /home/your_username/ethereum-buildbot/testslave/build-buildslave-cpp-one/build
+cd /home/your_username/expanse-buildbot/testslave/build-buildslave-cpp-one/build
 ```
 
 Copy the failing buildslave's `buildbot.tac.sample` to `buildbot.tac`:
 ```
-cp cpp-ethereum-buildslave/buildbot.tac.sample cpp-ethereum-buildslave/buildbot.tac
+cp cpp-expanse-buildslave/buildbot.tac.sample cpp-expanse-buildslave/buildbot.tac
 ```
 
 Edit the `buildbot.tac` file with your favorite editor:
 ```
-vim cpp-ethereum-buildslave/buildbot.tac
+vim cpp-expanse-buildslave/buildbot.tac
 ```
 
 Set `buildmaster_host` to your previously noted host IP. Make sure `slavename` and `passwd` also correspond to the buildslave you're trying to create.
@@ -135,4 +135,4 @@ docker exec -ti CONTAINER_NAME bash
 
 ### Contributing
 
-Make sure you have a local installation of the Ethereum Buildbot to test your changes, since any modification can greatly affect many builders and processes, and even bring the whole buildmaster to a halt if changes are blindly pushed to the repository. Pull requests are always welcome and recommended for any modification.
+Make sure you have a local installation of the Expanse Buildbot to test your changes, since any modification can greatly affect many builders and processes, and even bring the whole buildmaster to a halt if changes are blindly pushed to the repository. Pull requests are always welcome and recommended for any modification.

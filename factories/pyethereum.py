@@ -12,7 +12,7 @@ def pyethereum_factory(branch='master'):
         Git(
             haltOnFailure=True,
             logEnviron=False,
-            repourl='https://github.com/ethereum/pyethereum.git',
+            repourl='https://github.com/expanse-project/pyethereum.git',
             branch=branch,
             mode='full',
             method='copy',

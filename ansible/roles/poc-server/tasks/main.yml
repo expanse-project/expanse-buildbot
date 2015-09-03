@@ -1,8 +1,8 @@
 ---
-- name: install ethereum ppa
+- name: install expanse ppa
   sudo: true
-  apt_repository: repo=ppa:ethereum/ethereum
+  apt_repository: repo=ppa:expanse/expanse
 
-- name: install ethereum
+- name: install expanse
   sudo: true
-  apt: name=ethereum install_recommends=no
+  apt: name=expanse install_recommends=no

@@ -99,17 +99,17 @@ def integration_factory():
         Git(
             haltOnFailure=True,
             logEnviron=False,
-            repourl='https://github.com/ethereum/cpp-ethereum.git',
+            repourl='https://github.com/expanse-project/cpp-expanse.git',
             branch='develop',
             mode='full',
             method='copy',
-            codebase='cpp-ethereum',
+            codebase='cpp-expanse',
             retry=(5, 3)
         ),
         Git(
             haltOnFailure=True,
             logEnviron=False,
-            repourl='https://github.com/ethereum/ethereum.js.git',
+            repourl='https://github.com/expanse-project/expanse.js.git',
             branch='develop',
             mode='incremental',
             codebase='ethereumjs',

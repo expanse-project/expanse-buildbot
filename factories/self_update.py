@@ -15,9 +15,9 @@ def self_update_factory():
             haltOnFailure=True,
             logEnviron=False,
             name='update',
-            repourl='https://github.com/ethereum/ethereum-buildbot.git',
+            repourl='https://github.com/expanse-project/expanse-buildbot.git',
             mode='incremental',
-            codebase='ethereum-buildbot',
+            codebase='expanse-buildbot',
             retry=(5, 3)
         ),
         ShellCommand(

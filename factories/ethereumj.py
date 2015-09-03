@@ -12,7 +12,7 @@ def ethereumj_factory(branch='master'):
         Git(
             haltOnFailure=True,
             logEnviron=False,
-            repourl='https://github.com/ethereum/ethereumj.git',
+            repourl='https://github.com/expanse-project/ethereumj.git',
             branch=branch,
             mode='full',
             method='copy',

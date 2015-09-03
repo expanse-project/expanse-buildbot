@@ -11,7 +11,7 @@ def serpent_factory(branch='develop'):
         Git(
             haltOnFailure=True,
             logEnviron=False,
-            repourl='https://github.com/ethereum/serpent.git',
+            repourl='https://github.com/expanse-project/serpent.git',
             branch=branch,
             mode='full',
             method='copy',
@@ -21,7 +21,7 @@ def serpent_factory(branch='develop'):
         Git(
             haltOnFailure=True,
             logEnviron=False,
-            repourl='https://github.com/ethereum/pyethereum.git',
+            repourl='https://github.com/expanse-project/pyethereum.git',
             branch=branch,
             mode='full',
             method='copy',

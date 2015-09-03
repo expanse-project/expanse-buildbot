@@ -35,11 +35,11 @@ def osx_cpp_check_factory(branch='develop'):
         Git(
             haltOnFailure=True,
             logEnviron=False,
-            repourl='https://github.com/ethereum/cpp-ethereum.git',
+            repourl='https://github.com/expanse-project/cpp-expanse.git',
             branch=branch,
             mode='full',
             method='copy',
-            codebase='cpp-ethereum',
+            codebase='cpp-expanse',
             retry=(5, 3)
         ),
         Configure(
@@ -64,17 +64,17 @@ def osx_cpp_factory(branch='develop', isPullRequest=False, evmjit=False, headles
         Git(
             haltOnFailure=True,
             logEnviron=False,
-            repourl='https://github.com/ethereum/cpp-ethereum.git',
+            repourl='https://github.com/expanse-project/cpp-expanse.git',
             branch=branch,
             mode='full',
             method='copy',
-            codebase='cpp-ethereum',
+            codebase='cpp-expanse',
             retry=(5, 3)
         ),
         Git(
             haltOnFailure=True,
             logEnviron=False,
-            repourl='https://github.com/ethereum/tests.git',
+            repourl='https://github.com/expanse-project/tests.git',
             branch=branch,
             mode='incremental',
             codebase='tests',
@@ -141,7 +141,7 @@ def osx_cpp_factory(branch='develop', isPullRequest=False, evmjit=False, headles
     if not evmjit and not headless:
         for step in [
             Trigger(
-                schedulerNames=["cpp-ethereum-%s-osx-check" % branch],
+                schedulerNames=["cpp-expanse-%s-osx-check" % branch],
                 waitForFinish=False,
                 set_properties={
                     "version": Interpolate("%(prop:version)s")
@@ -154,7 +154,7 @@ def osx_cpp_factory(branch='develop', isPullRequest=False, evmjit=False, headles
         if not isPullRequest:
             for step in [
                 Trigger(
-                    schedulerNames=["cpp-ethereum-%s-brew" % branch],
+                    schedulerNames=["cpp-expanse-%s-brew" % branch],
                     waitForFinish=False,
                     set_properties={
                         "version": Interpolate("%(prop:version)s")
@@ -174,7 +174,7 @@ def osx_cpp_factory(branch='develop', isPullRequest=False, evmjit=False, headles
                 haltOnFailure=True,
                 logEnviron=False,
                 name="set-sha1sum",
-                command=Interpolate('sha1sum Ethereum.dmg | grep -o -w "\w\{40\}"'),
+                command=Interpolate('sha1sum Expanse.dmg | grep -o -w "\w\{40\}"'),
                 property='sha1sum'
             ),
             SetProperty(
@@ -189,7 +189,7 @@ def osx_cpp_factory(branch='develop', isPullRequest=False, evmjit=False, headles
             FileUpload(
                 haltOnFailure=True,
                 name='upload-alethzero',
-                slavesrc="Ethereum.dmg",
+                slavesrc="Expanse.dmg",
                 masterdest=Interpolate("public_html/builds/%(prop:buildername)s/%(prop:filename)s"),
                 url=Interpolate("builds/%(prop:buildername)s/%(prop:filename)s")
             ),

@@ -128,13 +128,13 @@ for buildslave in ['one', 'two', 'three', 'four', 'five', 'six']:
             name="buildslave-cpp-%s" % buildslave,
             builddir="build-buildslave-cpp-%s" % buildslave,
             slavenames=["buildslave-%s" % buildslave],
-            factory=buildslave_factory("cpp", "cpp-ethereum"),
+            factory=buildslave_factory("cpp", "cpp-expanse"),
             locks=[build_lock.access('counting')]),
         BuilderConfig(
             name="buildslave-go-%s" % buildslave,
             builddir="build-buildslave-go-%s" % buildslave,
             slavenames=["buildslave-%s" % buildslave],
-            factory=buildslave_factory("go", "go-ethereum"),
+            factory=buildslave_factory("go", "go-expanse"),
             locks=[build_lock.access('counting')])
     ]: builders.append(builder)
 
@@ -159,7 +159,7 @@ for branch in ['master', 'develop']:
     for builder in [
         BuilderConfig(
             name="Linux C++ %s branch" % branch,
-            builddir="build-cpp-ethereum-%s-docker" % branch,
+            builddir="build-cpp-expanse-%s-docker" % branch,
             slavenames=[
                 "slave-cpp-three%s" % ("" if branch == 'master' else "-develop"),
                 "slave-cpp-four%s" % ("" if branch == 'master' else "-develop")
@@ -168,7 +168,7 @@ for branch in ['master', 'develop']:
             locks=[build_lock.access('counting')]),
         BuilderConfig(
             name="Linux C++ GUI %s branch" % branch,
-            builddir="build-cpp-ethereum-gui-%s" % branch,
+            builddir="build-cpp-expanse-gui-%s" % branch,
             slavenames=[
                 "slave-cpp-three%s" % ("" if branch == 'master' else "-develop"),
                 "slave-cpp-four%s" % ("" if branch == 'master' else "-develop")
@@ -177,13 +177,13 @@ for branch in ['master', 'develop']:
             locks=[build_lock.access('counting')]),
         BuilderConfig(
             name="Linux C++ %s server" % branch,
-            builddir="build-cpp-ethereum-%s-server" % branch,
+            builddir="build-cpp-expanse-%s-server" % branch,
             slavenames=["poc-server-%s" % branch],
             factory=cpp_ethereum_server_factory(branch=branch),
             locks=[build_lock.access('counting')]),
         BuilderConfig(
             name="Linux C++ %s evmjit" % branch,
-            builddir="build-cpp-ethereum-%s-evmjit" % branch,
+            builddir="build-cpp-expanse-%s-evmjit" % branch,
             slavenames=[
                 "slave-cpp-three%s" % ("" if branch == 'master' else "-develop"),
                 "slave-cpp-four%s" % ("" if branch == 'master' else "-develop")
@@ -192,7 +192,7 @@ for branch in ['master', 'develop']:
             locks=[build_lock.access('counting')]),
         BuilderConfig(
             name="Linux Go %s branch" % branch,
-            builddir="build-go-ethereum-%s-docker" % branch,
+            builddir="build-go-expanse-%s-docker" % branch,
             slavenames=[
                 "slave-go-three%s" % ("" if branch == 'master' else "-develop"),
                 "slave-go-four%s" % ("" if branch == 'master' else "-develop")
@@ -201,7 +201,7 @@ for branch in ['master', 'develop']:
             locks=[go_lock.access('counting')]),
         BuilderConfig(
             name="ARM Go %s branch" % branch,
-            builddir="build-go-ethereum-%s-arm" % branch,
+            builddir="build-go-expanse-%s-arm" % branch,
             slavenames=[
                 "slave-go-three-arm",
                 "slave-go-four-arm"
@@ -246,13 +246,13 @@ for branch in ['master', 'develop']:
             locks=[brew_lock.access('counting')]),
         BuilderConfig(
             name="OSX Go %s brew" % branch,
-            builddir="build-go-ethereum-%s-brew" % branch,
+            builddir="build-go-expanse-%s-brew" % branch,
             slavenames=["osx", "osx-two"],
             factory=brew_go_factory(branch=branch),
             locks=[brew_lock.access('counting')]),
         BuilderConfig(
             name="Windows C++ %s branch" % branch,
-            builddir="build-cpp-ethereum-%s-win" % branch,
+            builddir="build-cpp-expanse-%s-win" % branch,
             slavenames=["winslave"],
             factory=win_cpp_factory(branch=branch),
             locks=[win_lock.access('counting')]),
@@ -290,7 +290,7 @@ for branch in ['master', 'develop']:
         # Extra checks
         BuilderConfig(
             name="Linux C++ %s check" % branch,
-            builddir="build-cpp-ethereum-%s-check" % branch,
+            builddir="build-cpp-expanse-%s-check" % branch,
             slavenames=[
                 "slave-cpp-one",
                 "slave-cpp-two"
@@ -299,7 +299,7 @@ for branch in ['master', 'develop']:
             locks=[build_lock.access('counting')]),
         BuilderConfig(
             name="OSX C++ %s check" % branch,
-            builddir="build-cpp-ethereum-%s-osx-check" % branch,
+            builddir="build-cpp-expanse-%s-osx-check" % branch,
             slavenames=["osx"],
             factory=osx_cpp_check_factory(branch=branch),
             locks=[osx_lock.access('counting')])
@@ -311,11 +311,11 @@ for branch in ['master', 'develop']:
             for builder in [
                 BuilderConfig(
                     name="Linux C++ %s deb %s-%s" % (branch, architecture, distribution),
-                    builddir="build-cpp-ethereum-%s-%s-%s" % (branch, architecture, distribution),
+                    builddir="build-cpp-expanse-%s-%s-%s" % (branch, architecture, distribution),
                     slavenames=latentslaves,
                     factory=deb_factory(
-                        name="cpp-ethereum",
-                        repourl="https://github.com/ethereum/cpp-ethereum.git",
+                        name="cpp-expanse",
+                        repourl="https://github.com/expanse-project/cpp-expanse.git",
                         ppabranch=branch,
                         branch=branch,
                         architecture=architecture,
@@ -323,12 +323,12 @@ for branch in ['master', 'develop']:
                     locks=[latent_lock.access('counting')]),
                 BuilderConfig(
                     name="Linux Go %s deb %s-%s" % (branch, architecture, distribution),
-                    builddir="build-go-ethereum-%s-%s-%s" % (branch, architecture, distribution),
+                    builddir="build-go-expanse-%s-%s-%s" % (branch, architecture, distribution),
                     slavenames=latentslaves,
                     factory=deb_factory(
-                        name="ethereum",
-                        repourl="https://github.com/ethereum/go-ethereum.git",
-                        ppabranch="go-ethereum%s" % ("-develop" if branch == 'develop' else ""),
+                        name="expanse",
+                        repourl="https://github.com/expanse-project/go-expanse.git",
+                        ppabranch="go-expanse%s" % ("-develop" if branch == 'develop' else ""),
                         branch=branch,
                         architecture=architecture,
                         distribution=distribution),
@@ -382,7 +382,7 @@ for distribution in distributions:
             factory=backport_factory(
                 name="golang",
                 setVersion=True,
-                repo="ethereum",
+                repo="expanse",
                 architecture="amd64",
                 distribution=distribution,
                 packages=["golang"]),
@@ -394,7 +394,7 @@ for distribution in distributions:
             factory=backport_factory(
                 name="cmake",
                 setVersion=True,
-                repo="ethereum",
+                repo="expanse",
                 architecture="amd64",
                 distribution=distribution,
                 packages=["cmake"]),
@@ -409,7 +409,7 @@ for distribution in distributions:
                 slavenames=["slave-cpp-one-deb", "slave-cpp-two-deb"],
                 factory=backport_factory(
                     name="qt5",
-                    repo="ethereum-qt",
+                    repo="expanse-qt",
                     architecture="amd64",
                     distribution=distribution,
                     packages=[
@@ -454,7 +454,7 @@ for builder in [
     # Linux
     BuilderConfig(
         name="Linux C++ pull requests",
-        builddir="build-cpp-ethereum-pr",
+        builddir="build-cpp-expanse-pr",
         slavenames=[
             "slave-cpp-five-pr",
             "slave-cpp-six-pr"
@@ -463,7 +463,7 @@ for builder in [
         locks=[build_lock.access('counting')]),
     BuilderConfig(
         name="Linux C++ evmjit pull requests",
-        builddir="build-cpp-ethereum-evmjit-pr",
+        builddir="build-cpp-expanse-evmjit-pr",
         slavenames=[
             "slave-cpp-five-pr",
             "slave-cpp-six-pr"
@@ -472,7 +472,7 @@ for builder in [
         locks=[build_lock.access('counting')]),
     BuilderConfig(
         name="Linux Go pull requests",
-        builddir="build-go-ethereum-pr",
+        builddir="build-go-expanse-pr",
         slavenames=[
             "slave-go-five-pr",
             "slave-go-six-pr"
@@ -481,7 +481,7 @@ for builder in [
         locks=[build_lock.access('counting')]),
     BuilderConfig(
         name="ARM Go pull requests",
-        builddir="build-go-ethereum-arm-pr",
+        builddir="build-go-expanse-arm-pr",
         slavenames=[
             "slave-go-five-arm",
             "slave-go-six-arm"
@@ -516,19 +516,19 @@ for builder in [
     # OSX
     BuilderConfig(
         name="OSX C++ pull requests",
-        builddir="build-cpp-ethereum-osx-pr",
+        builddir="build-cpp-expanse-osx-pr",
         slavenames=["osx", "osx-two"],
         factory=osx_cpp_factory(branch='develop', isPullRequest=True, headless=False),
         locks=[osx_lock.access('counting')]),
     BuilderConfig(
         name="OSX C++ evmjit pull requests",
-        builddir="build-cpp-ethereum-osx-evmjit-pr",
+        builddir="build-cpp-expanse-osx-evmjit-pr",
         slavenames=["osx"],
         factory=osx_cpp_factory(branch=branch, isPullRequest=True, evmjit=True, headless=False),
         locks=[osx_lock.access('counting')]),
     BuilderConfig(
         name="OSX Go pull requests",
-        builddir="build-go-ethereum-osx-pr",
+        builddir="build-go-expanse-osx-pr",
         slavenames=["osx", "osx-two"],
         factory=osx_go_factory(branch='develop', isPullRequest=True),
         locks=[osx_lock.access('counting')]),
@@ -554,13 +554,13 @@ for builder in [
     # Windows
     BuilderConfig(
         name="Windows C++ pull requests",
-        builddir="build-cpp-ethereum-win-pr",
+        builddir="build-cpp-expanse-win-pr",
         slavenames=["winslave"],
         factory=win_cpp_factory(branch='develop', isPullRequest=True),
         locks=[win_lock.access('counting')]),
     BuilderConfig(
         name="Windows Go pull requests",
-        builddir="build-go-ethereum-win-pr",
+        builddir="build-go-expanse-win-pr",
         slavenames=["winslave-go"],
         factory=windows_go_factory(branch='develop', isPullRequest=True),
         locks=[win_lock_go.access('counting')]),
@@ -568,7 +568,7 @@ for builder in [
     # Integration
     # BuilderConfig(
     #     name="Linux C++ integration",
-    #     builddir="build-cpp-ethereum-integration",
+    #     builddir="build-cpp-expanse-integration",
     #     slavenames=[
     #         "slave-cpp-five-integration"
     #     ],
@@ -577,11 +577,11 @@ for builder in [
 
     BuilderConfig(
         name="Linux C++ deb tester",
-        builddir="build-cpp-ethereum-deb-tester",
+        builddir="build-cpp-expanse-deb-tester",
         slavenames=latentslaves,
         factory=deb_factory(
-            name="cpp-ethereum",
-            repourl="https://github.com/ethereum/cpp-ethereum.git",
+            name="cpp-expanse",
+            repourl="https://github.com/expanse-project/cpp-expanse.git",
             ppabranch="libethereum-lite",
             branch="master",
             architecture="amd64",

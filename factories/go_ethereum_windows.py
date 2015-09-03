@@ -11,8 +11,8 @@ from go_ethereum import get_short_revision_go
 
 def _go_cmds_win(branch='master'):
     cmds = [
-        "mkdir %GOPATH%\\src\\github.com\\ethereum",
-        "xcopy /S/E *.* %GOPATH%\\src\\github.com\\ethereum\\go-ethereum\\"
+        "mkdir %GOPATH%\\src\\github.com\\expanse",
+        "xcopy /S/E *.* %GOPATH%\\src\\github.com\\expanse\\go-expanse\\"
     ]
 
     return " && ".join(cmds)
@@ -32,18 +32,18 @@ def windows_go_factory(branch='develop', isPullRequest=False):
         Git(
             haltOnFailure=True,
             logEnviron=False,
-            repourl='https://github.com/ethereum/go-ethereum.git',
+            repourl='https://github.com/expanse-project/go-expanse.git',
             branch=branch,
             mode='full',
             method='copy',
-            codebase='go-ethereum',
+            codebase='go-expanse',
             retry=(5, 3)
         ),
         SetPropertyFromCommand(
             haltOnFailure=True,
             logEnviron=False,
             name="set-version",
-            command='%s -ne "s/.*Version.*=\s*[^0-9]\([0-9]*\.[0-9]*\.[0-9]*\).*/\\1/p" cmd\geth\main.go' % sed,
+            command='%s -ne "s/.*Version.*=\s*[^0-9]\([0-9]*\.[0-9]*\.[0-9]*\).*/\\1/p" cmd\gexp\main.go' % sed,
             property = "version"
         ),
         ShellCommand(
@@ -66,10 +66,10 @@ def windows_go_factory(branch='develop', isPullRequest=False):
         ShellCommand(
             haltOnFailure=True,
             logEnviron=False,
-            name="build-geth",
-            description="building geth",
-            descriptionDone="build geth",
-            command="go build -v github.com\ethereum\go-ethereum\cmd\geth",
+            name="build-gexp",
+            description="building gexp",
+            descriptionDone="build gexp",
+            command="go build -v github.com\expanse\go-expanse\cmd\gexp",
             env=env
         )
     ]: factory.addStep(step)
@@ -82,7 +82,7 @@ def windows_go_factory(branch='develop', isPullRequest=False):
             name="go-test",
             description="go testing",
             descriptionDone="go test",
-            command="go test github.com\ethereum\go-ethereum\...",
+            command="go test github.com\expanse\go-expanse\...",
             env=env,
             maxTime=900
         )
@@ -96,7 +96,7 @@ def windows_go_factory(branch='develop', isPullRequest=False):
                 name="zip",
                 description='zipping',
                 descriptionDone='zipped',
-                command="%s geth.zip geth.exe" % zip_
+                command="%s gexp.zip gexp.exe" % zip_
             ),
             SetProperty(
                 description="setting filename",
@@ -110,7 +110,7 @@ def windows_go_factory(branch='develop', isPullRequest=False):
             FileUpload(
                 haltOnFailure=True,
                 name='upload',
-                slavesrc="geth.zip",
+                slavesrc="gexp.zip",
                 masterdest=Interpolate("public_html/builds/%(prop:buildername)s/%(prop:filename)s"),
                 url=Interpolate("/builds/%(prop:buildername)s/%(prop:filename)s")
             ),

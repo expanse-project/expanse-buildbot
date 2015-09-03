@@ -10,13 +10,13 @@ distributions = ['trusty', 'vivid']
 @properties.renderer
 def get_cpp_revision(props):
     if 'got_revision' in props:
-        return props['got_revision']['cpp-ethereum']
+        return props['got_revision']['cpp-expanse']
     return None
 
 @properties.renderer
 def get_short_revision(props):
     if 'got_revision' in props:
-        return props['got_revision']['cpp-ethereum'][:7]
+        return props['got_revision']['cpp-expanse'][:7]
     return None
 
 
@@ -45,17 +45,17 @@ def cpp_ethereum_factory(branch='master', deb=False, evmjit=False, headless=True
         Git(
             haltOnFailure=True,
             logEnviron=False,
-            repourl='https://github.com/ethereum/cpp-ethereum.git',
+            repourl='https://github.com/expanse-project/cpp-expanse.git',
             branch=branch,
             mode='full',
             method='copy',
-            codebase='cpp-ethereum',
+            codebase='cpp-expanse',
             retry=(5, 3)
         ),
         Git(
             haltOnFailure=True,
             logEnviron=False,
-            repourl='https://github.com/ethereum/tests.git',
+            repourl='https://github.com/expanse-project/tests.git',
             branch=branch,
             mode='incremental',
             codebase='tests',
@@ -125,7 +125,7 @@ def cpp_ethereum_factory(branch='master', deb=False, evmjit=False, headless=True
     if not evmjit and not headless:
         for step in [
             Trigger(
-                schedulerNames=["cpp-ethereum-%s-check" % branch],
+                schedulerNames=["cpp-expanse-%s-check" % branch],
                 waitForFinish=False,
                 set_properties={
                     "protocol": Interpolate("%(prop:protocol)s"),
@@ -136,7 +136,7 @@ def cpp_ethereum_factory(branch='master', deb=False, evmjit=False, headless=True
         # if branch is not 'master':
         #     for step in [
         #         Trigger(
-        #             schedulerNames=["cpp-ethereum-integration"],
+        #             schedulerNames=["cpp-expanse-integration"],
         #             waitForFinish=False,
         #             set_properties={
         #                 "database": Interpolate("%(prop:database)s"),
@@ -152,7 +152,7 @@ def cpp_ethereum_factory(branch='master', deb=False, evmjit=False, headless=True
                 for distribution in distributions:
                     for step in [
                         Trigger(
-                            schedulerNames=["cpp-ethereum-%s-%s-%s" % (branch, architecture, distribution)],
+                            schedulerNames=["cpp-expanse-%s-%s-%s" % (branch, architecture, distribution)],
                             waitForFinish=False,
                             set_properties={
                                 "version": Interpolate("%(prop:version)s")
@@ -163,7 +163,7 @@ def cpp_ethereum_factory(branch='master', deb=False, evmjit=False, headless=True
     if deb and not evmjit and headless:
         for step in [
             Trigger(
-                schedulerNames=["cpp-ethereum-%s-server" % branch],
+                schedulerNames=["cpp-expanse-%s-server" % branch],
                 waitForFinish=False,
                 set_properties={
                     "protocol": Interpolate("%(prop:protocol)s"),
@@ -182,11 +182,11 @@ def cpp_check_factory(branch='develop'):
         Git(
             haltOnFailure=True,
             logEnviron=False,
-            repourl='https://github.com/ethereum/cpp-ethereum.git',
+            repourl='https://github.com/expanse-project/cpp-expanse.git',
             branch=branch,
             mode='full',
             method='copy',
-            codebase='cpp-ethereum',
+            codebase='cpp-expanse',
             retry=(5, 3)
         ),
         WarningCountingShellCommand(

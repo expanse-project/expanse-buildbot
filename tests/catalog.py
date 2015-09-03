@@ -11,7 +11,7 @@ class Integration(unittest.TestCase):
     def setUp(self):
         self.driver = webdriver.Firefox()
         self.driver.implicitly_wait(30)
-        self.base_url = "http://ethereum-dapp-catalog.meteor.com/"
+        self.base_url = "http://expanse-dapp-catalog.meteor.com/"
         self.verificationErrors = []
         self.accept_next_alert = True
         self.driver.set_window_position(0, 0)

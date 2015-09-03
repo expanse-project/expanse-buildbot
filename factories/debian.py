@@ -50,8 +50,8 @@ def deb_factory(name=None, repourl=None, ppabranch=None, branch='master', distri
         )
     ]: factory.addStep(step)
 
-    # Run 'go get' for go-ethereum
-    if name == 'ethereum':
+    # Run 'go get' for go-expanse
+    if name == 'expanse':
         for step in [
             ShellCommand(
                 haltOnFailure=True,
@@ -125,7 +125,7 @@ def deb_factory(name=None, repourl=None, ppabranch=None, branch='master', distri
             name="get-debian",
             description="getting debian folder",
             descriptionDone="get debian folder",
-            command=Interpolate("wget https://github.com/ethereum/ethereum-ppa/archive/%(kw:ppabranch)s.tar.gz -O- |"
+            command=Interpolate("wget https://github.com/expanse-project/expanse-ppa/archive/%(kw:ppabranch)s.tar.gz -O- |"
                                 " tar -zx --exclude package.sh --exclude README.md --strip-components=1",
                                 ppabranch=ppabranch)
         ),
@@ -153,15 +153,15 @@ def deb_factory(name=None, repourl=None, ppabranch=None, branch='master', distri
     ]: factory.addStep(step)
 
     # Source only packages for dependencies, build local deb packages otherwise
-    if name in ['ethereum', 'cpp-ethereum']:
+    if name in ['expanse', 'cpp-expanse']:
         # Add pbuilderrc with ccache config
         # factory.addStep(FileDownload(
         #     mastersrc="pbuilderrc",
         #     slavedest="~/.pbuilderrc"
         # ))
-        main_ppa = "http://ppa.launchpad.net/ethereum/ethereum/ubuntu"
-        dev_ppa = "http://ppa.launchpad.net/ethereum/ethereum-dev/ubuntu"
-        qt_ppa = "http://ppa.launchpad.net/ethereum/ethereum-qt/ubuntu"
+        main_ppa = "http://ppa.launchpad.net/expanse/expanse/ubuntu"
+        dev_ppa = "http://ppa.launchpad.net/expanse/expanse-dev/ubuntu"
+        qt_ppa = "http://ppa.launchpad.net/expanse/expanse-qt/ubuntu"
 
         for step in [
             # Set PPA dependencies for pbuilder
@@ -181,7 +181,7 @@ def deb_factory(name=None, repourl=None, ppabranch=None, branch='master', distri
                 logEnviron=False,
                 architecture=architecture,
                 distribution=distribution,
-                basetgz="/var/cache/pbuilder/%s-%s-ethereum.cow" % (distribution, architecture),
+                basetgz="/var/cache/pbuilder/%s-%s-expanse.cow" % (distribution, architecture),
                 keyring="/usr/share/keyrings/ubuntu-archive-keyring.gpg"
             )
         ]: factory.addStep(step)
@@ -209,7 +209,7 @@ def deb_factory(name=None, repourl=None, ppabranch=None, branch='master', distri
             description='moving packages',
             descriptionDone='move packages',
             command="mkdir result; mv %s../*.changes ../*.dsc ../*.gz %sresult/" %
-                    ("*.deb *.changes " if name in ['ethereum', 'cpp-ethereum'] else "",
+                    ("*.deb *.changes " if name in ['expanse', 'cpp-expanse'] else "",
                         "../*.xz " if name == 'qtwebengine-opensource-src' else ""),
         ),
 
@@ -260,7 +260,7 @@ def deb_factory(name=None, repourl=None, ppabranch=None, branch='master', distri
         )
     ]: factory.addStep(step)
 
-    # Use ethereum-dev ppa for snapshots, only dput one source pkg
+    # Use expanse-dev ppa for snapshots, only dput one source pkg
     ppa_suffix = ""
     if branch == 'develop' or (name == 'libjson-rpc-cpp' and jsonrpc_for_develop):
         ppa_suffix = "-dev"
@@ -290,7 +290,7 @@ def deb_factory(name=None, repourl=None, ppabranch=None, branch='master', distri
                 name='dput',
                 description='dputting',
                 descriptionDone='dput',
-                command=['dput', 'ppa:%s%s' % ("caktux/ppa" if testdeb else "ethereum/ethereum", ppa_suffix),
+                command=['dput', 'ppa:%s%s' % ("caktux/ppa" if testdeb else "expanse/expanse", ppa_suffix),
                             Interpolate("changes/%(kw:dist)s/%(kw:arch)s/%(kw:name)s/"
                                         "%(prop:buildnumber)s/%(kw:name)s_%(kw:version)s%(prop:snapshot)s-"
                                         "0ubuntu1_source.changes",

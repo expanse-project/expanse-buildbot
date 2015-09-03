@@ -2,12 +2,12 @@
 
 @reboot cd /home/buildslave && /usr/local/bin/buildslave start slave
 
-# cpp-ethereum
+# cpp-expanse
 @reboot /usr/bin/docker run -d -t cptobvious/buildslave-cpp
 @reboot /usr/bin/docker run -d -t cptobvious/buildslave-cpp-pr
 @reboot /usr/bin/docker run -d --privileged=true -t cptobvious/buildslave-cpp-deb
 
-# go-ethereum
+# go-expanse
 @reboot /usr/bin/docker run -d -t cptobvious/buildslave-go
 @reboot /usr/bin/docker run -d -t cptobvious/buildslave-go-pr
 @reboot /usr/bin/docker run -d --privileged=true -t cptobvious/buildslave-go-deb

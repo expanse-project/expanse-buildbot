@@ -11,7 +11,7 @@ def pyethapp_factory(branch='master'):
         Git(
             haltOnFailure=True,
             logEnviron=False,
-            repourl='https://github.com/ethereum/pyethapp.git',
+            repourl='https://github.com/expanse-project/pyethapp.git',
             branch=branch,
             mode='full',
             method='copy',

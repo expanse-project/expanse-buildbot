@@ -15,76 +15,76 @@ distributions = ['trusty', 'vivid']
 schedulers = []
 
 self_codebases = {
-    'ethereum-buildbot': {
-        'repository': 'https://github.com/ethereum/ethereum-buildbot.git',
+    'expanse-buildbot': {
+        'repository': 'https://github.com/expanse-project/expanse-buildbot.git',
         'branch': 'master',
         'revision': None
     }
 }
 dockers_codebases = {
-    'ethereum-dockers': {
-        'repository': 'https://github.com/ethereum/ethereum-dockers.git',
+    'expanse-dockers': {
+        'repository': 'https://github.com/expanse-project/expanse-dockers.git',
         'branch': 'master',
         'revision': None
     }
 }
 cpp_ethereum_codebases = {
-    'cpp-ethereum': {
-        'repository': 'https://github.com/ethereum/cpp-ethereum.git',
+    'cpp-expanse': {
+        'repository': 'https://github.com/expanse-project/cpp-expanse.git',
         'branch': None,
         'revision': None
     },
     'tests': {
-        'repository': 'https://github.com/ethereum/tests.git',
+        'repository': 'https://github.com/expanse-project/tests.git',
         'branch': None,
         'revision': None
     }
 }
 go_ethereum_codebases = {
-    'go-ethereum': {
-        'repository': 'https://github.com/ethereum/go-ethereum.git',
+    'go-expanse': {
+        'repository': 'https://github.com/expanse-project/go-expanse.git',
         'branch': None,
         'revision': None
     }
 }
 ethereumj_codebases = {
     'ethereumj': {
-        'repository': 'https://github.com/ethereum/ethereumj.git',
+        'repository': 'https://github.com/expanse-project/ethereumj.git',
         'branch': 'master',
         'revision': None
     }
 }
 pyethereum_codebases = {
     'pyethereum': {
-        'repository': 'https://github.com/ethereum/pyethereum.git',
+        'repository': 'https://github.com/expanse-project/pyethereum.git',
         'branch': None,
         'revision': None
     }
 }
 pyethapp_codebases = {
     'pyethapp': {
-        'repository': 'https://github.com/ethereum/pyethapp.git',
+        'repository': 'https://github.com/expanse-project/pyethapp.git',
         'branch': None,
         'revision': None
     }
 }
 serpent_codebases = {
     'serpent': {
-        'repository': 'https://github.com/ethereum/serpent.git',
+        'repository': 'https://github.com/expanse-project/serpent.git',
         'branch': None,
         'revision': None
     }
 }
 brew_codebases = {
-    'homebrew-ethereum': {
-        'repository': 'https://github.com/ethereum/homebrew-ethereum.git',
+    'homebrew-expanse': {
+        'repository': 'https://github.com/expanse-project/homebrew-expanse.git',
         'branch': 'master',
         'revision': None
     }
 }
 ethereumjs_codebases = {
     'ethereumjs': {
-        'repository': 'https://github.com/ethereum/ethereum.js.git',
+        'repository': 'https://github.com/expanse-project/expanse.js.git',
         'branch': 'master',
         'revision': None
     }
@@ -128,8 +128,8 @@ def other_branches(branch):
 
 for scheduler in [
     SingleBranchScheduler(
-        name="ethereum-buildbot-git",
-        change_filter=filter.ChangeFilter(project='ethereum-buildbot', branch='master'),
+        name="expanse-buildbot-git",
+        change_filter=filter.ChangeFilter(project='expanse-buildbot', branch='master'),
         codebases=self_codebases,
         treeStableTimer=60,
         builderNames=["buildbot"]),
@@ -138,8 +138,8 @@ for scheduler in [
 for branch in ['master', 'develop']:
     for scheduler in [
         SingleBranchScheduler(
-            name="cpp-ethereum-%s-git" % branch,
-            change_filter=filter.ChangeFilter(project='cpp-ethereum', branch=branch),
+            name="cpp-expanse-%s-git" % branch,
+            change_filter=filter.ChangeFilter(project='cpp-expanse', branch=branch),
             codebases=all_cpp_ethereum_codebases,
             treeStableTimer=60,
             builderNames=[
@@ -151,8 +151,8 @@ for branch in ['master', 'develop']:
                 "OSX C++ %s evmjit" % branch,
                 "Windows C++ %s branch" % branch]),
         SingleBranchScheduler(
-            name="go-ethereum-%s-git" % branch,
-            change_filter=filter.ChangeFilter(project='go-ethereum', branch=branch),
+            name="go-expanse-%s-git" % branch,
+            change_filter=filter.ChangeFilter(project='go-expanse', branch=branch),
             codebases=all_go_ethereum_codebases,
             treeStableTimer=60,
             builderNames=[
@@ -180,13 +180,13 @@ for branch in ['master', 'develop']:
 
         # Brew triggerables
         Triggerable(
-            name="cpp-ethereum-%s-brew" % branch,
+            name="cpp-expanse-%s-brew" % branch,
             builderNames=[
                 "OSX C++ %s brew" % branch,
                 "OSX C++ GUI %s brew" % branch],
             codebases=all_cpp_ethereum_codebases),
         Triggerable(
-            name="go-ethereum-%s-brew" % branch,
+            name="go-expanse-%s-brew" % branch,
             builderNames=[
                 "OSX Go %s brew" % branch
             ],
@@ -194,17 +194,17 @@ for branch in ['master', 'develop']:
 
         # Extra triggerable checks
         Triggerable(
-            name="cpp-ethereum-%s-check" % branch,
+            name="cpp-expanse-%s-check" % branch,
             builderNames=["Linux C++ %s check" % branch],
             codebases=all_cpp_ethereum_codebases),
         Triggerable(
-            name="cpp-ethereum-%s-osx-check" % branch,
+            name="cpp-expanse-%s-osx-check" % branch,
             builderNames=["OSX C++ %s check" % branch],
             codebases=all_cpp_ethereum_codebases),
 
         # PoC node servers
         Triggerable(
-            name="cpp-ethereum-%s-server" % branch,
+            name="cpp-expanse-%s-server" % branch,
             builderNames=["Linux C++ %s server" % branch],
             codebases=all_cpp_ethereum_codebases)
     ]: schedulers.append(scheduler)
@@ -213,10 +213,10 @@ for branch in ['master', 'develop']:
         for distribution in distributions:
             for scheduler in [
                 Triggerable(
-                    name="cpp-ethereum-%s-%s-%s" % (branch, architecture, distribution),
+                    name="cpp-expanse-%s-%s-%s" % (branch, architecture, distribution),
                     builderNames=["Linux C++ %s deb %s-%s" % (branch, architecture, distribution)]),
                 Triggerable(
-                    name="go-ethereum-%s-%s-%s" % (branch, architecture, distribution),
+                    name="go-expanse-%s-%s-%s" % (branch, architecture, distribution),
                     builderNames=["Linux Go %s deb %s-%s" % (branch, architecture, distribution)])
             ]: schedulers.append(scheduler)
 
@@ -252,8 +252,8 @@ for scheduler in [
 
     # Pull requests
     AnyBranchScheduler(
-        name="cpp-ethereum-develop-pr-git",
-        change_filter=filter.ChangeFilter(codebase='cpp-ethereum', category='pull'),
+        name="cpp-expanse-develop-pr-git",
+        change_filter=filter.ChangeFilter(codebase='cpp-expanse', category='pull'),
         codebases=all_cpp_ethereum_codebases,
         treeStableTimer=60,
         builderNames=[
@@ -264,8 +264,8 @@ for scheduler in [
             "Windows C++ pull requests"
         ]),
     AnyBranchScheduler(
-        name="go-ethereum-develop-pr-git",
-        change_filter=filter.ChangeFilter(codebase='go-ethereum', category='pull'),
+        name="go-expanse-develop-pr-git",
+        change_filter=filter.ChangeFilter(codebase='go-expanse', category='pull'),
         codebases=all_go_ethereum_codebases,
         treeStableTimer=60,
         builderNames=[
@@ -312,7 +312,7 @@ for scheduler in [
 
     # Integration tests
     # Triggerable(
-    #     name="cpp-ethereum-integration",
+    #     name="cpp-expanse-integration",
     #     builderNames=["Linux C++ integration"],
     #     codebases=all_integration_codebases)
 
@@ -326,7 +326,7 @@ for scheduler in [
     ForceScheduler(
         name="force-self-update",
         builderNames=["buildbot"],
-        codebases=["ethereum-buildbot"])
+        codebases=["expanse-buildbot"])
 ]: schedulers.append(scheduler)
 
 for buildslave in ["one", "two", "three", "four", "five", "six"]:
@@ -334,87 +334,87 @@ for buildslave in ["one", "two", "three", "four", "five", "six"]:
         ForceScheduler(
             name="force-buildslave-cpp-%s" % buildslave,
             builderNames=["buildslave-cpp-%s" % buildslave],
-            codebases=["ethereum-dockers"]),
+            codebases=["expanse-dockers"]),
         ForceScheduler(
             name="force-buildslave-go-%s" % buildslave,
             builderNames=["buildslave-go-%s" % buildslave],
-            codebases=["ethereum-dockers"])
+            codebases=["expanse-dockers"])
     ]: schedulers.append(scheduler)
 for buildslave in ["one", "two"]:
     for scheduler in [
         ForceScheduler(
             name="force-buildslave-python-%s" % buildslave,
             builderNames=["buildslave-python-%s" % buildslave],
-            codebases=["ethereum-dockers"]),
+            codebases=["expanse-dockers"]),
         ForceScheduler(
             name="force-buildslave-java-%s" % buildslave,
             builderNames=["buildslave-java-%s" % buildslave],
-            codebases=["ethereum-dockers"])
+            codebases=["expanse-dockers"])
     ]: schedulers.append(scheduler)
 
 for branch in ['master', 'develop']:
     for scheduler in [
         # Linux C++/Go
         ForceScheduler(
-            name="force-cpp-ethereum-%s" % branch,
+            name="force-cpp-expanse-%s" % branch,
             builderNames=["Linux C++ %s branch" % branch],
-            codebases=["cpp-ethereum", "tests"]),
+            codebases=["cpp-expanse", "tests"]),
         ForceScheduler(
-            name="force-cpp-ethereum-gui-%s" % branch,
+            name="force-cpp-expanse-gui-%s" % branch,
             builderNames=["Linux C++ GUI %s branch" % branch],
-            codebases=["cpp-ethereum", "tests"]),
+            codebases=["cpp-expanse", "tests"]),
         ForceScheduler(
-            name="force-cpp-ethereum-%s-evmjit" % branch,
+            name="force-cpp-expanse-%s-evmjit" % branch,
             builderNames=["Linux C++ %s evmjit" % branch],
-            codebases=["cpp-ethereum", "tests"]),
+            codebases=["cpp-expanse", "tests"]),
         ForceScheduler(
-            name="force-go-ethereum-%s" % branch,
+            name="force-go-expanse-%s" % branch,
             builderNames=["Linux Go %s branch" % branch],
-            codebases=["go-ethereum"]),
+            codebases=["go-expanse"]),
         ForceScheduler(
-            name="force-go-ethereum-arm-%s" % branch,
+            name="force-go-expanse-arm-%s" % branch,
             builderNames=["ARM Go %s branch" % branch],
-            codebases=["go-ethereum"]),
+            codebases=["go-expanse"]),
 
         # OSX C++/Go
         ForceScheduler(
-            name="force-cpp-ethereum-%s-osx" % branch,
+            name="force-cpp-expanse-%s-osx" % branch,
             builderNames=["OSX C++ %s branch" % branch],
-            codebases=["cpp-ethereum", "tests"]),
+            codebases=["cpp-expanse", "tests"]),
         ForceScheduler(
-            name="force-cpp-ethereum-gui-%s-osx" % branch,
+            name="force-cpp-expanse-gui-%s-osx" % branch,
             builderNames=["OSX C++ GUI %s branch" % branch],
-            codebases=["cpp-ethereum", "tests"]),
+            codebases=["cpp-expanse", "tests"]),
         ForceScheduler(
-            name="force-cpp-ethereum-%s-osx-evmjit" % branch,
+            name="force-cpp-expanse-%s-osx-evmjit" % branch,
             builderNames=["OSX C++ %s evmjit" % branch],
-            codebases=["cpp-ethereum", "tests"]),
+            codebases=["cpp-expanse", "tests"]),
         ForceScheduler(
-            name="force-go-ethereum-%s-osx" % branch,
+            name="force-go-expanse-%s-osx" % branch,
             builderNames=["OSX Go %s branch" % branch],
-            codebases=["go-ethereum"]),
+            codebases=["go-expanse"]),
         ForceScheduler(
-            name="force-cpp-ethereum-%s-brew" % branch,
+            name="force-cpp-expanse-%s-brew" % branch,
             builderNames=["OSX C++ %s brew" % branch],
-            codebases=["homebrew-ethereum", "cpp-ethereum", "tests"]),
+            codebases=["homebrew-expanse", "cpp-expanse", "tests"]),
         ForceScheduler(
-            name="force-cpp-ethereum-gui-%s-brew" % branch,
+            name="force-cpp-expanse-gui-%s-brew" % branch,
             builderNames=["OSX C++ GUI %s brew" % branch],
-            codebases=["homebrew-ethereum", "cpp-ethereum", "tests"]),
+            codebases=["homebrew-expanse", "cpp-expanse", "tests"]),
         ForceScheduler(
-            name="force-go-ethereum-%s-brew" % branch,
+            name="force-go-expanse-%s-brew" % branch,
             builderNames=["OSX Go %s brew" % branch],
-            codebases=["homebrew-ethereum", "go-ethereum"]),
+            codebases=["homebrew-expanse", "go-expanse"]),
 
         # Windows C++/Go
         ForceScheduler(
-            name="force-cpp-ethereum-%s-win" % branch,
+            name="force-cpp-expanse-%s-win" % branch,
             builderNames=["Windows C++ %s branch" % branch],
-            codebases=["cpp-ethereum", "tests"]),
+            codebases=["cpp-expanse", "tests"]),
         ForceScheduler(
-            name="force-go-ethereum-%s-win" % branch,
+            name="force-go-expanse-%s-win" % branch,
             builderNames=["Windows Go %s branch" % branch],
-            codebases=["go-ethereum"]),
+            codebases=["go-expanse"]),
 
         # Other schedulers
         ForceScheduler(
@@ -452,21 +452,21 @@ for scheduler in [
     # Pull requests
     # Linux
     ForceScheduler(
-        name="force-cpp-ethereum-pr",
+        name="force-cpp-expanse-pr",
         builderNames=["Linux C++ pull requests"],
-        codebases=["cpp-ethereum", "tests"]),
+        codebases=["cpp-expanse", "tests"]),
     ForceScheduler(
-        name="force-cpp-ethereum-evmjit-pr",
+        name="force-cpp-expanse-evmjit-pr",
         builderNames=["Linux C++ evmjit pull requests"],
-        codebases=["cpp-ethereum", "tests"]),
+        codebases=["cpp-expanse", "tests"]),
     ForceScheduler(
-        name="force-go-ethereum-pr",
+        name="force-go-expanse-pr",
         builderNames=["Linux Go pull requests"],
-        codebases=["go-ethereum"]),
+        codebases=["go-expanse"]),
     ForceScheduler(
-        name="force-go-ethereum-arm-pr",
+        name="force-go-expanse-arm-pr",
         builderNames=["ARM Go pull requests"],
-        codebases=["go-ethereum"]),
+        codebases=["go-expanse"]),
     ForceScheduler(
         name="force-pyethereum-pr",
         builderNames=["Linux PyEthereum PRs"],
@@ -486,17 +486,17 @@ for scheduler in [
 
     # OSX
     ForceScheduler(
-        name="force-cpp-ethereum-osx-pr",
+        name="force-cpp-expanse-osx-pr",
         builderNames=["OSX C++ pull requests"],
-        codebases=["cpp-ethereum", "tests"]),
+        codebases=["cpp-expanse", "tests"]),
     ForceScheduler(
-        name="force-cpp-ethereum-osx-evmjit-pr",
+        name="force-cpp-expanse-osx-evmjit-pr",
         builderNames=["OSX C++ evmjit pull requests"],
-        codebases=["cpp-ethereum", "tests"]),
+        codebases=["cpp-expanse", "tests"]),
     ForceScheduler(
-        name="force-go-ethereum-osx-pr",
+        name="force-go-expanse-osx-pr",
         builderNames=["OSX Go pull requests"],
-        codebases=["go-ethereum"]),
+        codebases=["go-expanse"]),
     ForceScheduler(
         name="force-pyethereum-osx-pr",
         builderNames=["OSX PyEthereum PRs"],
@@ -512,25 +512,25 @@ for scheduler in [
 
     # Windows
     ForceScheduler(
-        name="force-cpp-ethereum-win-pr",
+        name="force-cpp-expanse-win-pr",
         builderNames=["Windows C++ pull requests"],
-        codebases=["cpp-ethereum", "tests"]),
+        codebases=["cpp-expanse", "tests"]),
     ForceScheduler(
-        name="force-go-ethereum-win-pr",
+        name="force-go-expanse-win-pr",
         builderNames=["Windows Go pull requests"],
-        codebases=["go-ethereum"]),
+        codebases=["go-expanse"]),
 
     # Integration
     # ForceScheduler(
-    #     name="force-cpp-ethereum-integration",
+    #     name="force-cpp-expanse-integration",
     #     builderNames=["Linux C++ integration"],
-    #     codebases=["cpp-ethereum", "ethereumjs", "integration"]),
+    #     codebases=["cpp-expanse", "ethereumjs", "integration"]),
 
     # deb tester
     ForceScheduler(
-        name="force-cpp-ethereum-deb-tester",
+        name="force-cpp-expanse-deb-tester",
         builderNames=["Linux C++ deb tester"],
-        # codebases=["cpp-ethereum", "tests"],
+        # codebases=["cpp-expanse", "tests"],
         repository=FixedParameter(name="repository", default=""),
         project=FixedParameter(name="project", default=""),
         branch=StringParameter(name="branch", default="develop"),

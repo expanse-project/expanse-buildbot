@@ -17,20 +17,20 @@ def brew_go_factory(branch='develop'):
         Git(
             haltOnFailure=True,
             logEnviron=False,
-            repourl='https://github.com/ethereum/go-ethereum.git',
+            repourl='https://github.com/expanse-project/go-expanse.git',
             branch=branch,
             mode='full',
             method='copy',
-            codebase='go-ethereum',
+            codebase='go-expanse',
             retry=(5, 3)
         ),
         Git(
             haltOnFailure=True,
             logEnviron=False,
-            repourl='https://github.com/ethereum/homebrew-ethereum.git',
+            repourl='https://github.com/expanse-project/homebrew-expanse.git',
             branch='master',
             mode='incremental',
-            codebase='homebrew-ethereum',
+            codebase='homebrew-expanse',
             retry=(5, 3),
             workdir='brew'
         ),
@@ -39,7 +39,7 @@ def brew_go_factory(branch='develop'):
             logEnviron=False,
             name="set-old-version",
             descriptionDone='set old version',
-            command='sed -ne "s/^%s  version \'\(.*\)\'/\\1/p" ethereum.rb' % ("" if branch == 'master' else "  "),
+            command='sed -ne "s/^%s  version \'\(.*\)\'/\\1/p" expanse.rb' % ("" if branch == 'master' else "  "),
             property='old_version',
             workdir='brew',
         )
@@ -50,8 +50,8 @@ def brew_go_factory(branch='develop'):
             haltOnFailure=True,
             logEnviron=False,
             name="update-version",
-            descriptionDone='update go-ethereum version',
-            command=Interpolate('sed -i "" "s/^  version \'\(.*\)\'/  version \'%(prop:version)s\'/" ethereum.rb'),
+            descriptionDone='update go-expanse version',
+            command=Interpolate('sed -i "" "s/^  version \'\(.*\)\'/  version \'%(prop:version)s\'/" expanse.rb'),
             workdir='brew',
         ))
     elif branch == 'develop':
@@ -59,8 +59,8 @@ def brew_go_factory(branch='develop'):
             haltOnFailure=True,
             logEnviron=False,
             name="update-version",
-            descriptionDone='update go-ethereum version',
-            command=Interpolate('sed -i "" "s/^    version \'\(.*\)\'/    version \'%(prop:version)s\'/" ethereum.rb'),
+            descriptionDone='update go-expanse version',
+            command=Interpolate('sed -i "" "s/^    version \'\(.*\)\'/    version \'%(prop:version)s\'/" expanse.rb'),
             workdir='brew',
         ))
 
@@ -70,14 +70,14 @@ def brew_go_factory(branch='develop'):
             logEnviron=False,
             name="git-add",
             descriptionDone='git add',
-            command='git add ethereum.rb',
+            command='git add expanse.rb',
             workdir='brew'
         ),
         ShellCommand(
             logEnviron=False,
             name="git-commit",
             descriptionDone='git commit',
-            command=Interpolate('git commit -m "bump ethereum to %(prop:version)s on %(kw:branch)s"', branch=branch),
+            command=Interpolate('git commit -m "bump expanse to %(prop:version)s on %(kw:branch)s"', branch=branch),
             workdir='brew',
             decodeRC={0: SUCCESS, 1: SUCCESS, 2: WARNINGS}
         ),
@@ -96,7 +96,7 @@ def brew_go_factory(branch='develop'):
             name="cleanup",
             description='cleanup',
             descriptionDone='clean',
-            command=["brew", "remove", "ethereum"],
+            command=["brew", "remove", "expanse"],
             workdir='brew',
             decodeRC={0: SUCCESS, 1: SUCCESS, 2: WARNINGS}
         ),
@@ -125,14 +125,14 @@ def brew_go_factory(branch='develop'):
             name="brew",
             description='running brew',
             descriptionDone='brew',
-            command=brew_install_cmd(cmd=['brew', 'install', 'ethereum.rb', '-v', '--build-bottle'], branch=branch),
+            command=brew_install_cmd(cmd=['brew', 'install', 'expanse.rb', '-v', '--build-bottle'], branch=branch),
             workdir='brew'
         ),
         ShellCommand(
             haltOnFailure=True,
             logEnviron=False,
             name="bottle",
-            command=brew_install_cmd(cmd=["brew", "bottle", "ethereum.rb", "-v"], branch=branch),
+            command=brew_install_cmd(cmd=["brew", "bottle", "expanse.rb", "-v"], branch=branch),
             description="bottling",
             descriptionDone="bottle",
             workdir='brew'
@@ -141,7 +141,7 @@ def brew_go_factory(branch='develop'):
             haltOnFailure=True,
             logEnviron=False,
             name="set-old-revision",
-            command='sed -ne "s/^    revision \(.*\)/\\1/p" ethereum.rb',
+            command='sed -ne "s/^    revision \(.*\)/\\1/p" expanse.rb',
             property='old_revision',
             workdir='brew'
         ),
@@ -150,7 +150,7 @@ def brew_go_factory(branch='develop'):
             description="setting bottle",
             descriptionDone="set bottle",
             property="bottle",
-            value=Interpolate("ethereum-%(prop:version)s.yosemite.bottle%(kw:revision)s.tar.gz", revision=brew_revision_suffix)
+            value=Interpolate("expanse-%(prop:version)s.yosemite.bottle%(kw:revision)s.tar.gz", revision=brew_revision_suffix)
         ),
         SetPropertyFromCommand(
             haltOnFailure=True,
@@ -165,9 +165,9 @@ def brew_go_factory(branch='develop'):
             name='upload-bottle',
             slavesrc=Interpolate("%(prop:bottle)s"),
             masterdest=Interpolate("public_html/builds/%(prop:buildername)s/%(prop:buildnumber)s/bottle/"
-                                   "ethereum-%(prop:version)s.yosemite.bottle.%(prop:buildnumber)s.tar.gz"),
+                                   "expanse-%(prop:version)s.yosemite.bottle.%(prop:buildnumber)s.tar.gz"),
             url=Interpolate("/builds/%(prop:buildername)s/%(prop:buildnumber)s/bottle/"
-                            "ethereum-%(prop:version)s.yosemite.bottle.%(prop:buildnumber)s.tar.gz"),
+                            "expanse-%(prop:version)s.yosemite.bottle.%(prop:buildnumber)s.tar.gz"),
             workdir='brew'
         )
     ]: factory.addStep(step)
@@ -180,7 +180,7 @@ def brew_go_factory(branch='develop'):
                 name="update-bottle-url",
                 descriptionDone='update bottle url',
                 command=Interpolate('sed -i "" "s/^    root_url \'\(.*\)\'/    root_url \'https:\/\/build.ethdev.com\/builds\/'
-                                    '%(kw:urlbuildername)s\/%(prop:buildnumber)s\/bottle\'/" ethereum.rb', urlbuildername=urlbuildername),
+                                    '%(kw:urlbuildername)s\/%(prop:buildnumber)s\/bottle\'/" expanse.rb', urlbuildername=urlbuildername),
                 workdir='brew'
             ),
             ShellCommand(
@@ -188,7 +188,7 @@ def brew_go_factory(branch='develop'):
                 logEnviron=False,
                 name="update-brew-revision",
                 descriptionDone='update brew revision',
-                command=Interpolate('sed -i "" "s/^    revision \(.*\)/    revision %(prop:buildnumber)s/" ethereum.rb'),
+                command=Interpolate('sed -i "" "s/^    revision \(.*\)/    revision %(prop:buildnumber)s/" expanse.rb'),
                 workdir='brew'
             ),
             ShellCommand(
@@ -196,7 +196,7 @@ def brew_go_factory(branch='develop'):
                 logEnviron=False,
                 name="update-sha1sum",
                 descriptionDone='update sha1sum',
-                command=Interpolate('sed -i "" "s/^    sha1 \'\(.*\)\' => :yosemite/    sha1 \'%(prop:sha1sum)s\' => :yosemite/" ethereum.rb'),
+                command=Interpolate('sed -i "" "s/^    sha1 \'\(.*\)\' => :yosemite/    sha1 \'%(prop:sha1sum)s\' => :yosemite/" expanse.rb'),
                 workdir='brew'
             ),
             ShellCommand(
@@ -204,14 +204,14 @@ def brew_go_factory(branch='develop'):
                 logEnviron=False,
                 name="git-add",
                 descriptionDone='git add',
-                command='git add ethereum.rb',
+                command='git add expanse.rb',
                 workdir='brew'
             ),
             ShellCommand(
                 logEnviron=False,
                 name="git-commit",
                 descriptionDone='git commit',
-                command=Interpolate('git commit -m "bump ethereum to %(prop:version)s at ethereum/go-ethereum@%(kw:go_revision)s"',
+                command=Interpolate('git commit -m "bump expanse to %(prop:version)s at expanse/go-expanse@%(kw:go_revision)s"',
                                     go_revision=get_short_revision_go),
                 workdir='brew',
                 decodeRC={0: SUCCESS, 1: SUCCESS, 2: WARNINGS}
@@ -235,7 +235,7 @@ def brew_go_factory(branch='develop'):
                 name="update-bottle-url",
                 descriptionDone='update bottle url',
                 command=Interpolate('sed -i "" "s/^      root_url \'\(.*\)\'/      root_url \'https:\/\/build.ethdev.com\/builds\/%(kw:urlbuildername)s\/'
-                                    '%(prop:buildnumber)s\/bottle\'/" ethereum.rb', urlbuildername=urlbuildername),
+                                    '%(prop:buildnumber)s\/bottle\'/" expanse.rb', urlbuildername=urlbuildername),
                 workdir='brew'
             ),
             ShellCommand(
@@ -243,7 +243,7 @@ def brew_go_factory(branch='develop'):
                 logEnviron=False,
                 name="update-brew-revision",
                 descriptionDone='update brew revision',
-                command=Interpolate('sed -i "" "s/^      revision \(.*\)/      revision %(prop:buildnumber)s/" ethereum.rb'),
+                command=Interpolate('sed -i "" "s/^      revision \(.*\)/      revision %(prop:buildnumber)s/" expanse.rb'),
                 workdir='brew'
             ),
             ShellCommand(
@@ -251,7 +251,7 @@ def brew_go_factory(branch='develop'):
                 logEnviron=False,
                 name="update-sha1sum",
                 descriptionDone='update sha1sum',
-                command=Interpolate('sed -i "" "s/^      sha1 \'\(.*\)\' => :yosemite/      sha1 \'%(prop:sha1sum)s\' => :yosemite/" ethereum.rb'),
+                command=Interpolate('sed -i "" "s/^      sha1 \'\(.*\)\' => :yosemite/      sha1 \'%(prop:sha1sum)s\' => :yosemite/" expanse.rb'),
                 workdir='brew'
             ),
             ShellCommand(
@@ -259,14 +259,14 @@ def brew_go_factory(branch='develop'):
                 logEnviron=False,
                 name="git-add",
                 descriptionDone='git add',
-                command='git add ethereum.rb',
+                command='git add expanse.rb',
                 workdir='brew'
             ),
             ShellCommand(
                 logEnviron=False,
                 name="git-commit",
                 descriptionDone='git commit',
-                command=Interpolate('git commit -m "bump ethereum to %(prop:version)s at ethereum/go-ethereum@%(kw:go_revision)s"',
+                command=Interpolate('git commit -m "bump expanse to %(prop:version)s at expanse/go-expanse@%(kw:go_revision)s"',
                                     go_revision=get_short_revision_go),
                 workdir='brew',
                 decodeRC={0: SUCCESS, 1: SUCCESS, 2: WARNINGS}

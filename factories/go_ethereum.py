@@ -10,14 +10,14 @@ distributions = ['trusty', 'vivid']
 @properties.renderer
 def get_short_revision_go(props):
     if 'got_revision' in props:
-        return props['got_revision']['go-ethereum'][:7]
+        return props['got_revision']['go-expanse'][:7]
     return None
 
 
 def _go_cmds(branch='master'):
     cmds = [
-        "mkdir -p $GOPATH/src/github.com/ethereum",
-        "cp -a . $GOPATH/src/github.com/ethereum/go-ethereum",
+        "mkdir -p $GOPATH/src/github.com/expanse",
+        "cp -a . $GOPATH/src/github.com/expanse-project/go-expanse",
         "rm -rf $GOPATH/pkg"
     ]
 
@@ -30,18 +30,18 @@ def go_ethereum_factory(branch='master', deb=False):
         Git(
             haltOnFailure=True,
             logEnviron=False,
-            repourl='https://github.com/ethereum/go-ethereum.git',
+            repourl='https://github.com/expanse-project/go-expanse.git',
             branch=branch,
             mode='full',
             method='copy',
-            codebase='go-ethereum',
+            codebase='go-expanse',
             retry=(5, 3)
         ),
         SetPropertyFromCommand(
             haltOnFailure=True,
             logEnviron=False,
             name="set-version",
-            command='sed -ne "s/.*Version.*=\s*[^0-9]\([0-9]*\.[0-9]*\.[0-9]*\).*/\\1/p" cmd/geth/main.go',
+            command='sed -ne "s/.*Version.*=\s*[^0-9]\([0-9]*\.[0-9]*\.[0-9]*\).*/\\1/p" cmd/gexp/main.go',
             property="version"
         ),
         ShellCommand(
@@ -63,10 +63,10 @@ def go_ethereum_factory(branch='master', deb=False):
         ShellCommand(
             haltOnFailure=True,
             logEnviron=False,
-            name="install-geth",
-            description="installing geth",
-            descriptionDone="install geth",
-            command="go install -v github.com/ethereum/go-ethereum/cmd/geth",
+            name="install-gexp",
+            description="installing gexp",
+            descriptionDone="install gexp",
+            command="go install -v github.com/expanse-project/go-expanse/cmd/gexp",
             env={"GOPATH": Interpolate("${GOPATH}:%(prop:workdir)s/build/Godeps/_workspace")}
         )
     ]: factory.addStep(step)
@@ -77,7 +77,7 @@ def go_ethereum_factory(branch='master', deb=False):
             name="go-test",
             description="go testing",
             descriptionDone="go test",
-            command="go test github.com/ethereum/go-ethereum/...",
+            command="go test github.com/expanse-project/go-expanse/...",
             env={"GOPATH": Interpolate("${GOPATH}:%(prop:workdir)s/build/Godeps/_workspace")},
             maxTime=900
         )
@@ -88,7 +88,7 @@ def go_ethereum_factory(branch='master', deb=False):
             for distribution in distributions:
                 for step in [
                     Trigger(
-                        schedulerNames=["go-ethereum-%s-%s-%s" % (branch, architecture, distribution)],
+                        schedulerNames=["go-expanse-%s-%s-%s" % (branch, architecture, distribution)],
                         waitForFinish=False,
                         set_properties={
                             "version": Interpolate("%(prop:version)s")

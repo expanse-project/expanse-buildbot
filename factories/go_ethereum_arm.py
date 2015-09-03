@@ -27,18 +27,18 @@ def arm_go_factory(branch='develop', isPullRequest=False):
         Git(
             haltOnFailure=True,
             logEnviron=False,
-            repourl='https://github.com/ethereum/go-ethereum.git',
+            repourl='https://github.com/expanse-project/go-expanse.git',
             branch=branch,
             mode='full',
             method='copy',
-            codebase='go-ethereum',
+            codebase='go-expanse',
             retry=(5, 3)
         ),
         SetPropertyFromCommand(
             haltOnFailure=True,
             logEnviron=False,
             name="set-version",
-            command='sed -ne "s/.*Version.*=\s*[^0-9]\([0-9]*\.[0-9]*\.[0-9]*\).*/\\1/p" cmd/geth/main.go',
+            command='sed -ne "s/.*Version.*=\s*[^0-9]\([0-9]*\.[0-9]*\.[0-9]*\).*/\\1/p" cmd/gexp/main.go',
             property="version"
         ),
         ShellCommand(
@@ -62,10 +62,10 @@ def arm_go_factory(branch='develop', isPullRequest=False):
         ShellCommand(
             haltOnFailure=True,
             logEnviron=False,
-            name="build-geth",
-            description="building geth",
-            descriptionDone="build geth",
-            command="go build -v github.com/ethereum/go-ethereum/cmd/geth",
+            name="build-gexp",
+            description="building gexp",
+            descriptionDone="build gexp",
+            command="go build -v github.com/expanse-project/go-expanse/cmd/gexp",
             env=env
         )
     ]: factory.addStep(step)
@@ -76,7 +76,7 @@ def arm_go_factory(branch='develop', isPullRequest=False):
     #         name="go-test",
     #         description="go testing",
     #         descriptionDone="go test",
-    #         command="go test github.com/ethereum/go-ethereum/...",
+    #         command="go test github.com/expanse-project/go-expanse/...",
     #         env=env,
     #         maxTime=900
     #     )
@@ -87,16 +87,16 @@ def arm_go_factory(branch='develop', isPullRequest=False):
             ShellCommand(
                 haltOnFailure=True,
                 logEnviron=False,
-                name="tar-geth",
+                name="tar-gexp",
                 description='packing',
                 descriptionDone='pack',
-                command=['tar', '-cjf', 'geth.tar.bz2', 'geth']
+                command=['tar', '-cjf', 'gexp.tar.bz2', 'gexp']
             ),
             SetPropertyFromCommand(
                 haltOnFailure=True,
                 logEnviron=False,
                 name="set-sha256sum",
-                command=Interpolate('sha256sum geth.tar.bz2 | grep -o -w "\w\{64\}"'),
+                command=Interpolate('sha256sum gexp.tar.bz2 | grep -o -w "\w\{64\}"'),
                 property='sha256sum'
             ),
             SetProperty(
@@ -104,14 +104,14 @@ def arm_go_factory(branch='develop', isPullRequest=False):
                 descriptionDone="set filename",
                 name="set-filename",
                 property="filename",
-                value=Interpolate("geth-ARM-%(kw:time_string)s-%(prop:version)s-%(kw:short_revision)s.tar.bz2",
+                value=Interpolate("gexp-ARM-%(kw:time_string)s-%(prop:version)s-%(kw:short_revision)s.tar.bz2",
                                   time_string=get_time_string,
                                   short_revision=get_short_revision_go)
             ),
             FileUpload(
                 haltOnFailure=True,
-                name='upload-geth',
-                slavesrc="geth.tar.bz2",
+                name='upload-gexp',
+                slavesrc="gexp.tar.bz2",
                 masterdest=Interpolate("public_html/builds/%(prop:buildername)s/%(prop:filename)s"),
                 url=Interpolate("/builds/%(prop:buildername)s/%(prop:filename)s")
             ),
@@ -119,14 +119,14 @@ def arm_go_factory(branch='develop', isPullRequest=False):
                 name="clean-latest-link",
                 description='cleaning latest link',
                 descriptionDone='clean latest link',
-                command=['rm', '-f', Interpolate("public_html/builds/%(prop:buildername)s/geth-ARM-latest.tar.bz2")]
+                command=['rm', '-f', Interpolate("public_html/builds/%(prop:buildername)s/gexp-ARM-latest.tar.bz2")]
             ),
             MasterShellCommand(
                 haltOnFailure=True,
                 name="link-latest",
                 description='linking latest',
                 descriptionDone='link latest',
-                command=['ln', '-sf', Interpolate("%(prop:filename)s"), Interpolate("public_html/builds/%(prop:buildername)s/geth-ARM-latest.tar.bz2")]
+                command=['ln', '-sf', Interpolate("%(prop:filename)s"), Interpolate("public_html/builds/%(prop:buildername)s/gexp-ARM-latest.tar.bz2")]
             )
         ]: factory.addStep(step)
 
